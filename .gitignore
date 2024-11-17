@@ -1,0 +1,7 @@
+*.zip
+*.backup
+*.tfstate
+*.lock.hcl
+.vscode/
+.DS_Store
+.terraform/
