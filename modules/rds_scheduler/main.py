@@ -9,7 +9,9 @@ rds = boto3.client('rds')
 
 def get_list_of_db_instances_with_tag(RDSTAG_KEY, RDSTAG_VALUE, RDS_ACTION):
     """
-    Retrieves a list of RDS DB instances with a specific tag and matching instance state.
+    Retrieves a list of RDS DB instances with a specific tag and matching
+    instance state. Tags are fetched for each instance using
+    ``list_tags_for_resource``.
 
     Args:
         RDSTAG_KEY (str): The key of the tag to match.
@@ -26,7 +28,10 @@ def get_list_of_db_instances_with_tag(RDSTAG_KEY, RDSTAG_VALUE, RDS_ACTION):
 
     for instance in response['DBInstances']:
         if instance['DBInstanceStatus'] in instance_state_values:
-            for tag in instance['TagList']:
+            tags = rds.list_tags_for_resource(
+                ResourceName=instance['DBInstanceArn']
+            )
+            for tag in tags.get('TagList', []):
                 if tag['Key'] == RDSTAG_KEY and tag['Value'] == RDSTAG_VALUE:
                     db_instance_ids.append(instance['DBInstanceIdentifier'])
 
