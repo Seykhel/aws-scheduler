@@ -24,16 +24,15 @@ def get_list_of_db_instances_with_tag(RDSTAG_KEY, RDSTAG_VALUE, RDS_ACTION):
     db_instance_ids = []
     instance_state_values = ["available"] if RDS_ACTION == "STOP" else ["stopped"] if RDS_ACTION == "START" else []
 
-    paginator = rds.get_paginator('describe_db_instances')
-    for page in paginator.paginate():
-        for instance in page['DBInstances']:
-            if instance['DBInstanceStatus'] in instance_state_values:
-                arn = instance['DBInstanceArn']
-                tags_response = rds.list_tags_for_resource(ResourceName=arn)
-                for tag in tags_response.get('TagList', []):
-                    if tag['Key'] == RDSTAG_KEY and tag['Value'] == RDSTAG_VALUE:
-                        db_instance_ids.append(instance['DBInstanceIdentifier'])
-                        break
+    response = rds.describe_db_instances()
+    for instance in response.get('DBInstances', []):
+        if instance['DBInstanceStatus'] in instance_state_values:
+            arn = instance['DBInstanceArn']
+            tags_response = rds.list_tags_for_resource(ResourceName=arn)
+            for tag in tags_response.get('TagList', []):
+                if tag['Key'] == RDSTAG_KEY and tag['Value'] == RDSTAG_VALUE:
+                    db_instance_ids.append(instance['DBInstanceIdentifier'])
+                    break
 
 
     return db_instance_ids
