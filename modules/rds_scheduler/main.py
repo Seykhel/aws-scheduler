@@ -26,9 +26,12 @@ def get_list_of_db_instances_with_tag(RDSTAG_KEY, RDSTAG_VALUE, RDS_ACTION):
 
     for instance in response['DBInstances']:
         if instance['DBInstanceStatus'] in instance_state_values:
-            for tag in instance['TagList']:
+            arn = instance['DBInstanceArn']
+            tags_response = rds.list_tags_for_resource(ResourceName=arn)
+            for tag in tags_response.get('TagList', []):
                 if tag['Key'] == RDSTAG_KEY and tag['Value'] == RDSTAG_VALUE:
                     db_instance_ids.append(instance['DBInstanceIdentifier'])
+                    break
 
     return db_instance_ids
 
