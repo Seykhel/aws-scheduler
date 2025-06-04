@@ -21,13 +21,14 @@ def get_list_of_db_instances_with_tag(RDSTAG_KEY, RDSTAG_VALUE, RDS_ACTION):
     Returns:
         list: A list of DB instance identifiers matching the specified tag and instance state.
     """
-    db_instance_ids = []
-    instance_state_values = ["available"] if RDS_ACTION == "STOP" else ["stopped"] if RDS_ACTION == "START" else []
+    if RDS_ACTION not in ("STOP", "START"):
+        print("Invalid RDS_ACTION value. Please set RDS_ACTION to STOP or START.")
+        return {
+            'statusCode': 400,
+            'body': 'Invalid RDS_ACTION value. Please set RDS_ACTION to STOP or START.'
+        }
 
-    paginator = rds.get_paginator('describe_db_instances')
-    for page in paginator.paginate():
-        for instance in page['DBInstances']:
-            if instance['DBInstanceStatus'] in instance_state_values:
+    }
                 arn = instance['DBInstanceArn']
                 tags_response = rds.list_tags_for_resource(ResourceName=arn)
                 for tag in tags_response.get('TagList', []):
