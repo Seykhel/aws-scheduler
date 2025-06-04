@@ -28,3 +28,12 @@ No inputs.
 
 No outputs.
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+
+## Running tests
+
+Install the development dependencies and run `pytest` from the repository root:
+
+```bash
+pip install pytest boto3 moto
+pytest
+```
