@@ -1,4 +1,4 @@
-# This file contains the variable definitions for the EC2 Scheduler module.
+# This file contains the variable definitions for the RDS Scheduler module.
 
 # The "name" variable is used as a prefix for the resources' names.
 variable "name" {
