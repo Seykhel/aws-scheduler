@@ -1,11 +1,14 @@
 import boto3
 import os
+from modules.logger_config import get_logger
 
 RDSTAG_KEY    = os.getenv("RDSTAG_KEY")
 RDSTAG_VALUE  = os.getenv("RDSTAG_VALUE")
 RDS_ACTION    = os.getenv("RDS_ACTION")
 
-rds = boto3.client('rds')
+rds = boto3.client("rds")
+logger = get_logger(__name__)
+REGION = rds.meta.region_name
 
 def get_list_of_db_instances_with_tag(RDSTAG_KEY, RDSTAG_VALUE, RDS_ACTION):
     """
@@ -32,6 +35,9 @@ def get_list_of_db_instances_with_tag(RDSTAG_KEY, RDSTAG_VALUE, RDS_ACTION):
             for tag in tags_response.get('TagList', []):
                 if tag['Key'] == RDSTAG_KEY and tag['Value'] == RDSTAG_VALUE:
                     db_instance_ids.append(instance['DBInstanceIdentifier'])
+                    logger.info(
+                        f"Matched DB instance {instance['DBInstanceIdentifier']} ({arn}) in {REGION}"
+                    )
                     break
 
 
@@ -51,7 +57,7 @@ def lambda_handler(event, context):
     try:
         db_instance_ids = get_list_of_db_instances_with_tag(RDSTAG_KEY, RDSTAG_VALUE, RDS_ACTION)
         if not db_instance_ids:
-            print(f"DB instances to {RDS_ACTION}: {db_instance_ids}")
+            logger.info(f"No DB instances to {RDS_ACTION} in {REGION}")
             return {
                 'statusCode': 200,
                 'body': f'No instances to {RDS_ACTION} with tag {RDSTAG_KEY}:{RDSTAG_VALUE}'
@@ -60,17 +66,19 @@ def lambda_handler(event, context):
         for db_instance_id in db_instance_ids:
             if RDS_ACTION == "STOP":
                 rds.stop_db_instance(DBInstanceIdentifier=db_instance_id)
+                logger.info(f"Stopping DB {db_instance_id} in {REGION}")
             elif RDS_ACTION == "START":
                 rds.start_db_instance(DBInstanceIdentifier=db_instance_id)
+                logger.info(f"Starting DB {db_instance_id} in {REGION}")
             else:
-                print("Invalid RDS_ACTION value. Please set RDS_ACTION to STOP or START.")
+                logger.error("Invalid RDS_ACTION value. Please set RDS_ACTION to STOP or START.")
                 return {
                     'statusCode': 400,
                     'body': 'Invalid RDS_ACTION value. Please set RDS_ACTION to STOP or START.'
                 }
 
     except Exception as error:
-        print(f"Error occurred! Error Message: {error}")
+        logger.exception(f"Error occurred in region {REGION}: {error}")
         return {
             'statusCode': 500,
             'body': f'Error occurred! Error Message: {error}'

@@ -1,11 +1,14 @@
 import boto3
 import os
+from modules.logger_config import get_logger
 
 EC2TAG_KEY   = os.getenv("EC2TAG_KEY")
 EC2TAG_VALUE = os.getenv("EC2TAG_VALUE")
 EC2_ACTION   = os.getenv("EC2_ACTION")
 
-ec2 = boto3.client('ec2')
+ec2 = boto3.client("ec2")
+logger = get_logger(__name__)
+REGION = ec2.meta.region_name
 
 def get_list_of_servers_with_tag(EC2TAG_KEY, EC2TAG_VALUE, EC2_ACTION):
     """
@@ -35,6 +38,7 @@ def get_list_of_servers_with_tag(EC2TAG_KEY, EC2TAG_VALUE, EC2_ACTION):
     )
 
     server_ids = [server['InstanceId'] for reservation in response['Reservations'] for server in reservation['Instances']]
+    logger.info(f"Servers to {EC2_ACTION} in {REGION}: {server_ids}")
     return server_ids
 
 def lambda_handler(event, context):
@@ -51,27 +55,27 @@ def lambda_handler(event, context):
     try:
         server_ids = get_list_of_servers_with_tag(EC2TAG_KEY, EC2TAG_VALUE, EC2_ACTION)
         if not server_ids:
-            print(f"No Servers to {EC2_ACTION}")
+            logger.info(f"No Servers to {EC2_ACTION} in {REGION}")
             return {
                 'statusCode': 200,
                 'body': f'No instances to {EC2_ACTION} with tag {EC2TAG_KEY}:{EC2TAG_VALUE}'
             }
 
-        print(f"Servers to {EC2_ACTION}: {server_ids}")
-
         if EC2_ACTION == "STOP":
             ec2.stop_instances(InstanceIds=server_ids)
+            logger.info(f"Stopping instances {server_ids} in {REGION}")
         elif EC2_ACTION == "START":
             ec2.start_instances(InstanceIds=server_ids)
+            logger.info(f"Starting instances {server_ids} in {REGION}")
         else:
-            print("Invalid EC2_ACTION value. Please set EC2_ACTION to STOP or START.")
+            logger.error("Invalid EC2_ACTION value. Please set EC2_ACTION to STOP or START.")
             return {
                 'statusCode': 400,
                 'body': 'Invalid EC2_ACTION value. Please set EC2_ACTION to STOP or START.'
             }
 
     except Exception as error:
-        print(f"Error occurred! Error Message: {error}")
+        logger.exception(f"Error occurred in region {REGION}: {error}")
         return {
             'statusCode': 500,
             'body': f'Error occurred! Error Message: {error}'

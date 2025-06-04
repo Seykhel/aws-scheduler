@@ -1,8 +1,10 @@
 import importlib.util
 import os
+import sys
 from unittest.mock import MagicMock, patch
 
 ROOT = os.path.dirname(os.path.dirname(__file__))
+sys.path.insert(0, ROOT)
 
 # Load modules dynamically while patching boto3 clients so that no AWS calls occur
 with patch("boto3.client", return_value=MagicMock()):
