@@ -5,3 +5,5 @@
 .vscode/
 .DS_Store
 .terraform/
+__pycache__/
+.pytest_cache/
