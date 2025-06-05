@@ -1,6 +1,6 @@
 repos:
 - repo: https://github.com/antonbabenko/pre-commit-terraform
-  rev: v1.83.6
+  rev: latest
   hooks:
     - id: terraform_fmt
     - id: terraform_docs
@@ -10,6 +10,6 @@ repos:
         - --hook-config=--create-file-if-not-exist=true
 
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v2.1.0
+  rev: latest
   hooks:
     - id: check-merge-conflict
