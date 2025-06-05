@@ -1,8 +1,10 @@
 import importlib.util
 import os
+import sys
 from unittest.mock import MagicMock, patch
 
 ROOT = os.path.dirname(os.path.dirname(__file__))
+sys.path.insert(0, ROOT)
 
 # Load modules dynamically while patching boto3 clients so that no AWS calls occur
 with patch("boto3.client", return_value=MagicMock()):
@@ -26,7 +28,7 @@ def test_get_list_of_servers_with_tag_stop():
             {"Instances": [{"InstanceId": "i-1"}, {"InstanceId": "i-2"}]}
         ]
     }
-    with patch.object(ec2_main, "ec2", mock_ec2):
+    with patch.object(ec2_main.scheduler, "client", mock_ec2):
         result = ec2_main.get_list_of_servers_with_tag("Env", "dev", "STOP")
         assert result == ["i-1", "i-2"]
         mock_ec2.describe_instances.assert_called_with(
@@ -51,7 +53,7 @@ def test_get_list_of_db_instances_with_tag_start():
     mock_rds.list_tags_for_resource.return_value = {
         "TagList": [{"Key": "Env", "Value": "dev"}]
     }
-    with patch.object(rds_main, "rds", mock_rds):
+    with patch.object(rds_main.scheduler, "client", mock_rds):
         result = rds_main.get_list_of_db_instances_with_tag("Env", "dev", "START")
         assert result == ["db-1"]
         mock_rds.list_tags_for_resource.assert_called_with(

@@ -1,9 +1,22 @@
 # aws-scheduler
 
-<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+
+## Running tests
+
+Install the development dependencies and run `pytest` from the repository root:
+
+```bash
+pip install pytest boto3 moto
+pytest
+```
+
+<!-- BEGIN_TF_DOCS -->
 ## Requirements
 
-No requirements.
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 4.0 |
 
 ## Providers
 
@@ -22,18 +35,14 @@ No resources.
 
 ## Inputs
 
-No inputs.
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_region"></a> [region](#input\_region) | AWS region to deploy resources | `string` | `"us-east-1"` | no |
 
 ## Outputs
 
-No outputs.
-<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-
-## Running tests
-
-Install the development dependencies and run `pytest` from the repository root:
-
-```bash
-pip install pytest boto3 moto
-pytest
-```
+| Name | Description |
+|------|-------------|
+| <a name="output_ec2_scheduler_lambda_arns"></a> [ec2\_scheduler\_lambda\_arns](#output\_ec2\_scheduler\_lambda\_arns) | ARNs of the EC2 scheduler Lambda functions |
+| <a name="output_rds_scheduler_lambda_arns"></a> [rds\_scheduler\_lambda\_arns](#output\_rds\_scheduler\_lambda\_arns) | ARNs of the RDS scheduler Lambda functions |
+<!-- END_TF_DOCS -->

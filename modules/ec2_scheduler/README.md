@@ -56,3 +56,5 @@ module "ec2_scheduler_custom" {
 }
 
 ```
+
+This module outputs the ARNs of the Lambda functions for each action.
