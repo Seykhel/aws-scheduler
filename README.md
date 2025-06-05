@@ -10,6 +10,12 @@ pip install pytest boto3 moto
 pytest
 ```
 
+## Remote state
+
+State is stored in an S3 bucket with a DynamoDB table for locking. Update the
+`backend` configuration in `versions.tf` with your bucket and table names before
+running `terraform init`.
+
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 

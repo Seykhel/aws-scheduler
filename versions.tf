@@ -6,6 +6,13 @@ terraform {
       version = "~> 4.0"
     }
   }
+  backend "s3" {
+    bucket         = "aws-scheduler-state"
+    key            = "terraform.tfstate"
+    region         = "us-east-1"
+    dynamodb_table = "aws-scheduler-locks"
+    encrypt        = true
+  }
 }
 
 provider "aws" {
