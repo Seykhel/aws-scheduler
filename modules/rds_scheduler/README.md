@@ -1,6 +1,6 @@
 # AWS RDS Scheduler to STOP and START RDS Instances
 
-## This Terraform deploy
+## This Terraform module deploys
 
 - Lambda Function to Stop RDS Instances with specific Tag
 - Lambda Function to Start RDS Instances with specific Tag

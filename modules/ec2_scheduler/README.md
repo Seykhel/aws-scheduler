@@ -1,6 +1,6 @@
 # AWS EC2 Scheduler to STOP and START EC2 Instances
 
-## This Terraform deploy
+## This Terraform module deploys
 
 - Lambda Function to Stop EC2 Instances with specific Tag
 - Lambda Function to Start EC2 Instances with specific Tag
