@@ -24,7 +24,6 @@ class RDSScheduler(BaseScheduler):
                         break
         return db_instance_ids
 
-
     def start_resources(self, ids):
         for db_instance_id in ids:
             self.client.start_db_instance(DBInstanceIdentifier=db_instance_id)
@@ -32,7 +31,6 @@ class RDSScheduler(BaseScheduler):
     def stop_resources(self, ids):
         for db_instance_id in ids:
             self.client.stop_db_instance(DBInstanceIdentifier=db_instance_id)
-
 
 scheduler = RDSScheduler()
 
