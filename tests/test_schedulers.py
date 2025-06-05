@@ -59,3 +59,33 @@ def test_get_list_of_db_instances_with_tag_start():
         mock_rds.list_tags_for_resource.assert_called_with(
             ResourceName="arn:aws:rds:us-east-1:123456789012:db:db-1"
         )
+
+
+def test_ec2_lambda_handler_stop_calls_stop_resources():
+    with (
+        patch.object(ec2_main.scheduler, "get_resource_ids", return_value=["i-1"]),
+        patch.object(ec2_main.scheduler, "stop_resources") as mock_stop,
+        patch.object(ec2_main.scheduler, "start_resources") as mock_start,
+    ):
+        ec2_main.scheduler.action = "STOP"
+        ec2_main.scheduler.tag_key = "Env"
+        ec2_main.scheduler.tag_value = "dev"
+        result = ec2_main.lambda_handler({}, {})
+        assert result["statusCode"] == 200
+        mock_stop.assert_called_once_with(["i-1"])
+        mock_start.assert_not_called()
+
+
+def test_rds_lambda_handler_start_calls_start_resources():
+    with (
+        patch.object(rds_main.scheduler, "get_resource_ids", return_value=["db-1"]),
+        patch.object(rds_main.scheduler, "start_resources") as mock_start,
+        patch.object(rds_main.scheduler, "stop_resources") as mock_stop,
+    ):
+        rds_main.scheduler.action = "START"
+        rds_main.scheduler.tag_key = "Env"
+        rds_main.scheduler.tag_value = "dev"
+        result = rds_main.lambda_handler({}, {})
+        assert result["statusCode"] == 200
+        mock_start.assert_called_once_with(["db-1"])
+        mock_stop.assert_not_called()
