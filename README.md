@@ -3,7 +3,9 @@
 
 ## Running tests
 
-Install the development dependencies and run `pytest` from the repository root:
+Install the development dependencies and run `pytest` from the repository root.
+Terraform must also be available in `PATH` so that the infrastructure code can
+be validated during the test run:
 
 ```bash
 pip install pytest boto3 moto
