@@ -1,0 +1,37 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.9
+    commands:
+      - echo "Installing dependencies..."
+      - pip install --upgrade pip
+      - pip install -r requirements.txt -t ./python
+
+  build:
+    commands:
+      - echo "Building Lambda layer..."
+      - mkdir -p python/modules
+      - cp modules/scheduler_common.py python/modules/
+      - cp modules/logger_config.py python/modules/
+      - touch python/modules/__init__.py
+      - echo "Creating layer zip file..."
+      - zip -r layer.zip python
+      - aws s3 cp layer.zip s3://${S3_BUCKET}/lambda-layers/scheduler-common/latest/
+      - LAYER_VERSION_ARN=$(aws lambda publish-layer-version \
+          --layer-name ${LAYER_NAME} \
+          --description "Common modules for AWS Scheduler" \
+          --license-info "MIT" \
+          --zip-file fileb://layer.zip \
+          --compatible-runtimes python3.9 \
+          --query 'LayerVersionArn' \
+          --output text)
+      - echo "Layer version ARN: $LAYER_VERSION_ARN"
+      - echo "Updating Lambda functions to use the new layer version..."
+      # Aggiungi qui i comandi per aggiornare le funzioni Lambda se necessario
+
+artifacts:
+  files:
+    - layer.zip
+  discard-paths: yes

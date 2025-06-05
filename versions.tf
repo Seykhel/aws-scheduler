@@ -3,7 +3,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 4.0.0"
+      version = ">= 4.23.0"  # Versione minima che supporta le risorse S3 separate
     }
   }
   backend "local" {
@@ -13,4 +13,9 @@ terraform {
 
 provider "aws" {
   region = var.region
+  
+  # Ignora i tag per evitare warning durante l'import
+  default_tags {
+    tags = {}
+  }
 }

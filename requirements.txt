@@ -1,0 +1,11 @@
+# AWS SDK for Python - Required for interacting with AWS services
+# Used by Lambda functions to manage EC2 and RDS instances
+boto3>=1.26.0
+
+# Date/Time Utilities - Required for handling timezone-aware datetime objects
+# Used for proper scheduling and timezone conversions
+python-dateutil>=2.8.2
+
+# Timezone Definitions - Required for accurate timezone handling
+# Ensures consistent timezone support across different environments
+pytz>=2022.7
