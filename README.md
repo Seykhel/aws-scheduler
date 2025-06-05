@@ -8,7 +8,7 @@ Terraform must also be available in `PATH` so that the infrastructure code can
 be validated during the test run:
 
 ```bash
-pip install pytest boto3 moto
+pip install pytest boto3
 pytest
 ```
 
