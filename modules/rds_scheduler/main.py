@@ -1,5 +1,5 @@
-from modules.scheduler_common import BaseScheduler
-from modules.logger_config import get_logger
+from scheduler_common import BaseScheduler
+from logger_config import get_logger
 
 logger = get_logger(__name__)
 

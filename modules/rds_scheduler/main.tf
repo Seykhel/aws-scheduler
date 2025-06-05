@@ -17,6 +17,7 @@ resource "aws_lambda_function" "rds" {
   handler          = "lambda_function.lambda_handler"
   filename         = data.archive_file.lambda_zip.output_path
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
+  layers           = [var.scheduler_layer_arn]
   tags             = var.tags
   timeout          = 10
 

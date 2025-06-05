@@ -27,6 +27,12 @@ variable "start_cron_schedule" {
   default     = "cron(00 09 * * ? *)"
 }
 
+# The "scheduler_layer_arn" variable specifies the ARN of the Lambda layer containing common modules.
+variable "scheduler_layer_arn" {
+  description = "ARN of the Lambda layer containing common modules"
+  type        = string
+}
+
 # The "tags" variable defines the tags to apply to resources.
 variable "tags" {
   description = "Tags to apply to resources"
