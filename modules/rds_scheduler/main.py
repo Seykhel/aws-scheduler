@@ -32,7 +32,6 @@ class RDSScheduler(BaseScheduler):
         for db_instance_id in ids:
             self.client.stop_db_instance(DBInstanceIdentifier=db_instance_id)
 
-
 scheduler = RDSScheduler()
 
 def get_list_of_db_instances_with_tag(tag_key, tag_value, action):
@@ -41,6 +40,6 @@ def get_list_of_db_instances_with_tag(tag_key, tag_value, action):
     scheduler.action = action
     return scheduler.get_resource_ids()
 
-
 def lambda_handler(event, context):
     return scheduler.lambda_handler(event, context)
+
